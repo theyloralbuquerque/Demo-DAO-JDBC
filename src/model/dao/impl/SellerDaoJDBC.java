@@ -52,16 +52,8 @@ public class SellerDaoJDBC implements SellerDao {
 			st.setInt(1, id);               // O primeiro placeholder recebe o valor de id.
 			rs = st.executeQuery();			// .executeUpdate() executa o comando sql armazenado em st e retorna o n° de linhas afetadas.
 			if (rs.next()) {				// Se a próxima linha armazenada em rs for verdadeira.
-				Department dep = new Department();		// Criação da variável dep do tipo Department().
-				dep.setId(rs.getInt("DepartmentId"));	// Chama o método setId() passando como parâmetro o valor da coluna DepartmentId.
-				dep.setName(rs.getString("DepName"));	// Chama o método setName() passando como parâmetro o valor da coluna DepName.
-				Seller obj = new Seller();				// Criação da variável obj do tipo Seller().
-				obj.setId(rs.getInt("Id"));				// Chama o método setId() passando como parâmetro o valor da coluna Id.
-				obj.setName(rs.getString("Name"));		// Chama o método setName() passando como parâmetro o valor da coluna Name.
-				obj.setEmail(rs.getString("Email"));	// Chama o método setEmail() passando como parâmetro o valor da coluna Email.
-				obj.setBaseSalary(rs.getDouble("BaseSalary")); // Chama o método setBaseSalary() passando como parâmetro o valor da coluna BaseSalary.
-				obj.setBirthDate(rs.getDate("BirthDate"));	   // Chama o método setBirthDate() passando como parâmetro o valor da coluna BirthDate.
-				obj.setDepartment(dep);						   // Chama o método setDepartment() passando como parâmetro o valor do objeto dep.
+				Department dep = instantiateDepartment(rs);		// Criação da variável dep do tipo Department() recebendo o retorno do método instantiateDepartment(rs).
+				Seller obj = instantiateSeller(rs, dep);		// Criação da variável obj do tipo Seller() recebendo o retorno do método instantiateSeller(rs, dep).
 				return obj;
 			}
 			return null;
@@ -73,6 +65,24 @@ public class SellerDaoJDBC implements SellerDao {
 			DB.closeStatement(st);
 			DB.closeResultSet(rs);
 		}
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller obj = new Seller();
+		obj.setId(rs.getInt("Id"));				// Chama o método setId() passando como parâmetro o valor da coluna Id.
+		obj.setName(rs.getString("Name"));		// Chama o método setName() passando como parâmetro o valor da coluna Name.
+		obj.setEmail(rs.getString("Email"));	// Chama o método setEmail() passando como parâmetro o valor da coluna Email.
+		obj.setBaseSalary(rs.getDouble("BaseSalary")); // Chama o método setBaseSalary() passando como parâmetro o valor da coluna BaseSalary.
+		obj.setBirthDate(rs.getDate("BirthDate"));	   // Chama o método setBirthDate() passando como parâmetro o valor da coluna BirthDate.
+		obj.setDepartment(dep);						   // Chama o método setDepartment() passando como parâmetro o valor do objeto dep.
+		return obj;	
+	}
+
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department();		// Criação da variável dep do tipo Department().
+		dep.setId(rs.getInt("DepartmentId"));	// Chama o método setId() passando como parâmetro o valor da coluna DepartmentId.
+		dep.setName(rs.getString("DepName"));	// Chama o método setName() passando como parâmetro o valor da coluna DepName.
+		return dep;
 	}
 
 	@Override
