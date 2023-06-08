@@ -90,8 +90,42 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null; // Permite utilizar consultas sql utilizando placeholders. 
+		ResultSet rs = null;         // Permite acessar e manipular os dados retornados pela consulta.
+		try {
+			st = conn.prepareStatement(     // Pega o comando sql dentro dos parêntes e retorna o resultado para um objeto PreparedStatement.
+					"SELECT seller.*,department.Name as DepName "
+					+ "FROM seller INNER JOIN department "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "ORDER BY Name ");
+			
+			rs = st.executeQuery();			       // .executeUpdate() executa o comando sql armazenado em st e retorna o n° de linhas afetadas.
+			
+			List<Seller> list = new ArrayList<>(); // Lista list do tipo Seller para armazenar cada Seller que retornar da consulta.
+			Map<Integer, Department> map = new HashMap<>();  // Criação de um map que tem uma chave tipo Integer e o valor tipo Department.
+			
+			while (rs.next()) {					   // Enquanto  a próxima linha armazenada em rs for verdadeira.
+				
+				Department dep = map.get(rs.getInt("DepartmentId")); // Pega o valor do map pela chave Integer (que é a coluna DepartmentId).
+				
+				if (dep == null) {  // Se o map.get() retornar null esse if será executado, pois a variável dep receberá null.
+					dep = instantiateDepartment(rs);	// A variável dep do tipo Department() recebendo o retorno do método instantiateDepartment(rs).
+					map.put(rs.getInt("DepartmentId"), dep); // Adiciona no map um novo funcionário como valor e o DepartmentId como chave.
+				}
+				
+				Seller obj = instantiateSeller(rs, dep);	 // Criação da variável obj do tipo Seller() recebendo o retorno do método instantiateSeller(rs, dep).
+				list.add(obj);  				        // Adiciona um novo funcionário à list. 
+				
+			}
+			return list;
+		}
+		catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+			DB.closeResultSet(rs);
+		}
 	}
 
 	@Override
