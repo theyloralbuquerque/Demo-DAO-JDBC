@@ -64,8 +64,29 @@ public class SellerDaoJDBC implements SellerDao {
 	}
 
 	@Override
-	public void update(Seller obj) {
-		// TODO Auto-generated method stub
+	public void update(Seller obj) { // Método responsável por atualizar dados no BD.
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("UPDATE seller "
+									   + "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? "
+									   + "WHERE Id = ?");
+			
+			st.setString(1, obj.getName());  // Primeiro navega pelo obj e depois chama o getName() a partir de obj.
+			st.setString(2, obj.getEmail()); // Primeiro navega pelo obj e depois chama o getEmail()  a partir de obj.
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime())); // Primeiro navega pelo obj e depois chama o getBirthDate().
+			st.setDouble(4, obj.getBaseSalary()); 	   // Primeiro navega pelo obj e depois chama o getBaseSalary()  a partir de obj.
+			st.setInt(5, obj.getDepartment().getId()); // Primeiro navega pelo obj e depois chama o getDepartment() para entrar na dependência department e depois pega o .getId() da classe Department, tudo isso a partir de obj.
+			st.setInt(6, obj.getId());  	 // Primeiro navega pelo obj e depois chama o getId()  a partir de obj.
+			
+			st.executeUpdate(); // Executa o comando SQL armazenado em st.
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 

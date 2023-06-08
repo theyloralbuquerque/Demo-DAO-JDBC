@@ -32,8 +32,14 @@ public class Program {
 		}
 		
 		System.out.println("\n====TEST 04: Seller insert====");
-		Seller newseller = new Seller(null, "Greg", "greg@gmail.com", new Date(), 4000.0, department);
-		sellerDao.insert(newseller);
-		System.out.println("Inserted! New id = " + newseller.getId());
+		Seller newSeller = new Seller(null, "Greg", "greg@gmail.com", new Date(), 4000.0, department); // Instanciação de um novo seller.
+		sellerDao.insert(newSeller); // Chamada do método insert, passando como argumento o newSeller.
+		System.out.println("Inserted! New id = " + newSeller.getId());
+		
+		System.out.println("\n====TEST 05: Seller update====");
+		seller = sellerDao.findById(1); // .findById(1) vai retornar o vendedor que tem o id 1 e armazenar em seller. 
+		seller.setName("Martha Waine"); // Vai alterar o nome do vendedor armazenado em seller.  
+		sellerDao.update(seller);	    // Vai atualizar os dados do vendedor com base no id armazenado em seller e com os dados de seller. 
+		System.out.println("Updated completed!");
 	}
 }
