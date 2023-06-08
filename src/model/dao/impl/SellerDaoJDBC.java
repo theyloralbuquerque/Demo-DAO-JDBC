@@ -92,7 +92,22 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("DELETE FROM seller WHERE Id = ?"); // Pega o comando sql dentro dos parêntes e retorna o resultado para um objeto PreparedStatement.
+			
+			st.setInt(1, id); // Define o primeiro placeholder como o valor de id que foi passado como parâmentro.
+			
+			st.executeUpdate(); // Executa o comando SQL armazenado em st.
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
+		
 		
 	}
 
