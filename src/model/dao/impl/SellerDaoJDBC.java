@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,40 @@ public class SellerDaoJDBC implements SellerDao {
 	
 	@Override
 	public void insert(Seller obj) {
-		// TODO Auto-generated method stub
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("INSERT INTO seller "
+										+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+										+ "VALUES "
+										+ "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+			
+			st.setString(1, obj.getName());  // Primeiro navega pelo obj e depois chama o getName() a partir de obj.
+			st.setString(2, obj.getEmail()); // Primeiro navega pelo obj e depois chama o getEmail()  a partir de obj.
+			st.setDate(3, new java.sql.Date(obj.getBirthDate().getTime())); // Primeiro navega pelo obj e depois chama o getBirthDate().
+			st.setDouble(4, obj.getBaseSalary()); 	   // Primeiro navega pelo obj e depois chama o getBaseSalary()  a partir de obj.
+			st.setInt(5, obj.getDepartment().getId()); // Primeiro navega pelo obj e depois chama o getDepartment() para entrar na dependência department e depois pega o .getId() da classe Department, tudo isso a partir de obj.
+			
+			int rowsAffected = st.executeUpdate(); // Executa o comando SQL armazenado em st e retorna a qtde de linhas afetadas.
+			
+			if (rowsAffected > 0) { // Se rowsAffected tiver um valor maior que 0.
+				ResultSet rs = st.getGeneratedKeys(); // .getGeneratedKeys() retorna as chaves geradas automaticamente após a execução de uma instrução SQL de inserção.
+				if (rs.next()) { 	// Se a próxima linha (linha 1) de rs tiver algum valor.
+					int id = rs.getInt(1); // id vai receber o valor da coluna 1, que é a coluna id e primeira coluna das chaves retornadas.
+					obj.setId(id);  // obj.setId(id) atribui o id gerado ao objeto obj.
+				}
+				DB.closeResultSet(rs); // Fecha o ResultSet.
+			}
+			else { // Se nenhuma linha for alterada.
+				throw new DbException("Unexpected error! No rows affected!"); // Lança uma DbException.
+			}
+		}
+		catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 		
 	}
 
