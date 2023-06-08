@@ -123,7 +123,9 @@ public class SellerDaoJDBC implements SellerDao {
 					+ "WHERE seller.Id = ?");
 			
 			st.setInt(1, id);               // O primeiro placeholder recebe o valor de id.
+			
 			rs = st.executeQuery();			// .executeUpdate() executa o comando sql armazenado em st e retorna o n° de linhas afetadas.
+			
 			if (rs.next()) {				// Se a próxima linha armazenada em rs for verdadeira.
 				Department dep = instantiateDepartment(rs);		// Criação da variável dep do tipo Department() recebendo o retorno do método instantiateDepartment(rs).
 				Seller obj = instantiateSeller(rs, dep);		// Criação da variável obj do tipo Seller() recebendo o retorno do método instantiateSeller(rs, dep).

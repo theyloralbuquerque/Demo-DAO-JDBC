@@ -15,7 +15,7 @@ public class Program {
 		
 		Scanner sc = new Scanner(System.in);
 		
-		SellerDao sellerDao = DaoFactory.createSellerdao(); // Chama o método que cria um Dao e armazena em sellerDao.
+		SellerDao sellerDao = DaoFactory.createSellerDao(); // Chama o método que cria um Dao e armazena em sellerDao.
 		
 		System.out.println("====TEST 01: Seller findById====");
 		Seller seller = sellerDao.findById(3);
